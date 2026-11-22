@@ -1,0 +1,86 @@
+name: 'Bug Report'
+description: 'Report a bug, exception, kernel panic, or subsystem failure in rover-kernel'
+title: '[Bug]: '
+labels: ['bug', 'triage']
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue in `rover-kernel`!
+        Please fill out this form with all relevant Rust toolchain, target triple, QEMU configuration, and serial console logs.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is, including expected versus actual behavior.
+      placeholder: Describe the kernel panic, CPU exception, page fault, or scheduler issue...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity / Priority
+      description: How severely does this defect impact the kernel?
+      options:
+        - 'Critical / Blocker (Crash, kernel panic, page fault, memory corruption, build broken)'
+        - 'High (Major subsystem failure, scheduler dead-lock, incorrect interrupt dispatch)'
+        - 'Medium (Minor defect with workaround, non-critical driver warning)'
+        - 'Low (Cosmetic, minor diagnostic message, edge-case warning)'
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: rust_version
+    attributes:
+      label: Rust Toolchain Version
+      description: Output of `rustc --version --verbose` or toolchain channel.
+      placeholder: e.g. rustc 1.85.0 (4d91de4e4 2025-02-17) / edition 2024
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target_triple
+    attributes:
+      label: Target Architecture / Triple
+      description: The compilation target triple where the issue occurs.
+      options:
+        - 'x86_64-unknown-none (Bare-metal x86-64)'
+        - 'aarch64-unknown-none (Bare-metal ARM64)'
+        - 'riscv64gc-unknown-none-elf (Bare-metal RISC-V 64)'
+        - 'x86_64-pc-windows-msvc (Host Windows tests)'
+        - 'x86_64-unknown-linux-gnu (Host Linux tests)'
+        - 'aarch64-apple-darwin (Host macOS tests)'
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: Affected Subsystem
+      description: Which kernel subsystem is impacted?
+      options:
+        - 'arch/x86_64 (CPU, GDT, IDT, MSRs, Port I/O)'
+        - 'mm (Physical frame allocator, paging, kernel heap)'
+        - 'interrupts (APIC timer, PIC, IRQ handlers)'
+        - 'drivers (Serial COM1, PCI bus, fbcon, PS/2)'
+        - 'sched (Scheduler, context switch, tasks)'
+        - 'syscall (System call ABI, dispatch table)'
+        - 'fs / block (VFS, RamFS, block device, FdTable)'
+        - 'security (Capabilities, SMEP/SMAP/NXE, usercopy)'
+        - 'boot (Rover Boot Protocol v1 handshake)'
+        - 'Other'
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Serial Console / QEMU Log Output
+      description: Copy and paste relevant QEMU serial output, stack traces, or panic logs.
+      render: text

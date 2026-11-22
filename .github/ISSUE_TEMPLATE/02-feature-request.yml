@@ -1,0 +1,47 @@
+name: 'Feature Request'
+description: 'Suggest a new feature, hardware driver, architecture port, or subsystem enhancement for rover-kernel'
+title: '[Feature]: '
+labels: ['enhancement']
+type: Enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature for `rover-kernel`!
+        Please describe your proposal clearly and how it fits into the kernel architecture.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or missing capability?
+      placeholder: A clear and concise description of what the problem is...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution / Design
+      description: Describe the solution you would like, including design decisions or subsystem impacts.
+      placeholder: Detailed description of the proposed interface, algorithm, or driver architecture...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: Target Subsystem
+      options:
+        - 'arch (Architecture support: aarch64, riscv64, x86_64)'
+        - 'mm (Virtual memory, demand paging, slab allocator)'
+        - 'interrupts (I/O APIC, MSI/MSI-X)'
+        - 'drivers (Storage NVMe/AHCI, network, USB, input)'
+        - 'sched (SMP scheduling, priority queues)'
+        - 'syscall (POSIX compatibility, new syscalls)'
+        - 'fs / block (Ext2/FAT32 filesystem, partition table)'
+        - 'security (LSM hooks, sandboxing)'
+        - 'Other'
+      default: 0
+    validations:
+      required: true

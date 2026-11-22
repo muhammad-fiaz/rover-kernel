@@ -1,0 +1,25 @@
+name: 'Documentation'
+description: 'Suggest improvements or corrections to rover-kernel documentation or architecture guides'
+title: '[Docs]: '
+labels: ['documentation']
+type: Documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve `rover-kernel` documentation!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Documentation Issue / Request
+      description: What section or topic needs clarification, updating, or creation?
+      placeholder: Describe the missing documentation, ambiguous API, or correction needed...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_changes
+    attributes:
+      label: Suggested Content
+      description: If you have draft text or suggestions, please share them here.

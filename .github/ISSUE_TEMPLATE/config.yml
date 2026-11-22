@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions / Community
+    url: https://github.com/muhammad-fiaz/rover-kernel/discussions
+    about: Ask general questions or discuss kernel architecture with the community.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/muhammad-fiaz/rover-kernel/security/policy
+    about: Please report security vulnerabilities privately according to our security policy.
