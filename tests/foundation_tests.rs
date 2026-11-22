@@ -3,7 +3,12 @@
 //! Validates boot protocol structures, synchronization, GDT/IDT descriptors,
 //! and CPU feature parsing.
 
-#![allow(clippy::unwrap_used, clippy::unreadable_literal, clippy::borrow_as_ptr, clippy::doc_markdown)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::unreadable_literal,
+    clippy::borrow_as_ptr,
+    clippy::doc_markdown
+)]
 
 use rover_kernel::arch::x86_64::CpuCapabilities;
 use rover_kernel::arch::x86_64::gdt::{

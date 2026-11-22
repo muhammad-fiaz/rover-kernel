@@ -5,6 +5,7 @@ version = 4
 [[package]]
 name = "rover-bootloader"
 version = "0.1.0"
+source = "git+https://github.com/muhammad-fiaz/rover-bootloader.git#b8a9f18fcdb1bc17ed6097e84ad29435919f157a"
 dependencies = [
  "rover-uefi",
 ]
@@ -20,3 +21,4 @@ dependencies = [
 [[package]]
 name = "rover-uefi"
 version = "0.1.0"
+source = "git+https://github.com/muhammad-fiaz/rover-uefi.git#f668ce26a40895a2e3da7f7846daf30267e56f64"

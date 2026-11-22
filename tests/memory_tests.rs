@@ -3,7 +3,12 @@
 //! Validates physical and virtual address helpers, page table indexing,
 //! frame allocation, and kernel heap allocation and coalescing.
 
-#![allow(clippy::unwrap_used, clippy::unreadable_literal, clippy::borrow_as_ptr, clippy::doc_markdown)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::unreadable_literal,
+    clippy::borrow_as_ptr,
+    clippy::doc_markdown
+)]
 
 use core::alloc::Layout;
 use rover_kernel::mm::address::{PAGE_SIZE, PhysAddr, VirtAddr};

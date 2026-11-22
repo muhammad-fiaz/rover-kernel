@@ -3,7 +3,12 @@
 //! Validates VFS, `RamFS`, Block Device, Capabilities, Mutex, `RwLock`, `OnceLock`,
 //! and PS/2 scancode decoding.
 
-#![allow(clippy::unwrap_used, clippy::unreadable_literal, clippy::borrow_as_ptr, clippy::doc_markdown)]
+#![allow(
+    clippy::unwrap_used,
+    clippy::unreadable_literal,
+    clippy::borrow_as_ptr,
+    clippy::doc_markdown
+)]
 
 extern crate alloc;
 use alloc::string::String;

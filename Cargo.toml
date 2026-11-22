@@ -28,12 +28,6 @@ bench = false
 rover-uefi = { git = "https://github.com/muhammad-fiaz/rover-uefi.git" }
 rover-bootloader = { git = "https://github.com/muhammad-fiaz/rover-bootloader.git" }
 
-[patch."https://github.com/muhammad-fiaz/rover-uefi.git"]
-rover-uefi = { path = "../crates/uefi" }
-
-[patch."https://github.com/muhammad-fiaz/rover-bootloader.git"]
-rover-bootloader = { path = "../bootloader" }
-
 [profile.dev]
 panic = "abort"
 
