@@ -3,7 +3,7 @@
 //! Controls per-CPU Local APIC registers via MMIO, End-Of-Interrupt (EOI) signaling,
 //! Spurious vector configuration, and LAPIC periodic timer setup.
 
-use crate::arch::x86_64::{read_msr, write_msr};
+use crate::arch::current::{read_msr, write_msr};
 use crate::sync::SpinLock;
 
 /// `IA32_APIC_BASE` MSR index.

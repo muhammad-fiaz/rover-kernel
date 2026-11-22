@@ -146,12 +146,28 @@ impl IndexMut<usize> for PageTable {
     }
 }
 
-/// Flushes the TLB entry for the specified virtual address (`invlpg`).
+/// Flushes the TLB entry for the specified virtual address.
 #[inline]
 pub fn invalidate_page(addr: VirtAddr) {
-    // SAFETY: invlpg flushes the translation cache for the specified linear address.
+    #[cfg(target_arch = "x86_64")]
     unsafe {
         core::arch::asm!("invlpg [{0}]", in(reg) addr.as_u64(), options(nostack, preserves_flags));
+    }
+    #[cfg(target_arch = "aarch64")]
+    unsafe {
+        core::arch::asm!("tlbi vaae1is, {0}", in(reg) addr.as_u64() >> 12, options(nomem, nostack));
+    }
+    #[cfg(target_arch = "riscv64")]
+    unsafe {
+        core::arch::asm!("sfence.vma {0}, zero", in(reg) addr.as_u64(), options(nomem, nostack));
+    }
+    #[cfg(not(any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "riscv64"
+    )))]
+    {
+        let _ = addr;
     }
 }
 

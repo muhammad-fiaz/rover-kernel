@@ -3,7 +3,7 @@
 //! Remaps PIC interrupt vector offsets from 0..15 to 32..47 to prevent conflict
 //! with CPU exceptions (0..31), and provides full IRQ masking when switching to APIC.
 
-use crate::arch::x86_64::io::{inb, io_wait, outb};
+use crate::arch::current::io::{inb, io_wait, outb};
 
 const PIC1_COMMAND: u16 = 0x20;
 const PIC1_DATA: u16 = 0x21;

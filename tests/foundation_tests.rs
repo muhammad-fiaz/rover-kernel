@@ -10,11 +10,14 @@
     clippy::doc_markdown
 )]
 
+#[cfg(target_arch = "x86_64")]
 use rover_kernel::arch::x86_64::CpuCapabilities;
+#[cfg(target_arch = "x86_64")]
 use rover_kernel::arch::x86_64::gdt::{
     GdtEntry, GlobalDescriptorTable, KERNEL_CODE_SELECTOR, KERNEL_DATA_SELECTOR,
     USER_CODE_SELECTOR, USER_DATA_SELECTOR,
 };
+#[cfg(target_arch = "x86_64")]
 use rover_kernel::arch::x86_64::idt::{EXCEPTION_NAMES, InterruptDescriptorTable};
 use rover_kernel::boot::{
     ROVER_BOOT_MAGIC, ROVER_BOOT_PROTOCOL_VERSION, RoverArchId, RoverBootInfo, RoverCommandLine,
@@ -119,6 +122,7 @@ fn test_spinlock_mutual_exclusion() {
 }
 
 #[test]
+#[cfg(target_arch = "x86_64")]
 fn test_gdt_selectors_and_entries() {
     assert_eq!(KERNEL_CODE_SELECTOR, 0x08);
     assert_eq!(KERNEL_DATA_SELECTOR, 0x10);
@@ -138,6 +142,7 @@ fn test_gdt_selectors_and_entries() {
 }
 
 #[test]
+#[cfg(target_arch = "x86_64")]
 fn test_idt_layout_and_exception_names() {
     let mut idt = InterruptDescriptorTable::default();
     assert_eq!(core::mem::size_of_val(&idt), 256 * 16);
@@ -152,6 +157,7 @@ fn test_idt_layout_and_exception_names() {
 }
 
 #[test]
+#[cfg(target_arch = "x86_64")]
 fn test_cpu_capabilities_vendor_string() {
     let caps = CpuCapabilities {
         vendor: *b"AuthenticAMD",
@@ -170,4 +176,10 @@ fn test_cpu_capabilities_vendor_string() {
         has_page_1gb: true,
     };
     assert_eq!(caps.vendor_str(), "AuthenticAMD");
+}
+
+#[test]
+fn test_current_cpu_capabilities() {
+    let caps = rover_kernel::arch::current::CpuCapabilities::probe();
+    assert_ne!(caps.vendor_str(), "");
 }

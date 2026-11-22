@@ -4,13 +4,13 @@
 //! and spurious interrupts (vector 255).
 
 use super::apic::end_of_interrupt;
-use crate::arch::x86_64::register_idt_gate;
 use core::sync::atomic::{AtomicU64, Ordering};
 
 /// Global system tick counter incremented on every timer interrupt.
 pub static TICK_COUNTER: AtomicU64 = AtomicU64::new(0);
 
-// Macro for generating naked hardware IRQ stubs.
+#[cfg(target_arch = "x86_64")]
+// Macro for generating naked hardware IRQ stubs on x86_64.
 macro_rules! hardware_irq_stub {
     ($name:ident, $handler:ident) => {
         #[unsafe(no_mangle)]
@@ -54,7 +54,9 @@ macro_rules! hardware_irq_stub {
     };
 }
 
+#[cfg(target_arch = "x86_64")]
 hardware_irq_stub!(irq32_timer_entry, handle_timer_tick);
+#[cfg(target_arch = "x86_64")]
 hardware_irq_stub!(irq33_keyboard_entry, handle_keyboard_irq);
 
 #[unsafe(no_mangle)]
@@ -67,11 +69,12 @@ extern "C" fn handle_timer_tick() {
 extern "C" fn handle_keyboard_irq() {
     // Read keyboard scancode from I/O port 0x60.
     // SAFETY: Reading keyboard controller data port.
-    let scancode = unsafe { crate::arch::x86_64::inb(0x60) };
+    let scancode = unsafe { crate::arch::current::inb(0x60) };
     let _ = scancode; // Consumed
     end_of_interrupt();
 }
 
+#[cfg(target_arch = "x86_64")]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 unsafe extern "C" fn irq255_spurious_entry() {
@@ -79,9 +82,12 @@ unsafe extern "C" fn irq255_spurious_entry() {
     core::arch::naked_asm!("iretq");
 }
 
-/// Registers the hardware IRQ gate handlers into the system IDT.
+/// Registers the hardware IRQ gate handlers into the system interrupt table.
 pub fn register_hardware_interrupts() {
-    register_idt_gate(32, irq32_timer_entry as *const () as usize);
-    register_idt_gate(33, irq33_keyboard_entry as *const () as usize);
-    register_idt_gate(255, irq255_spurious_entry as *const () as usize);
+    #[cfg(target_arch = "x86_64")]
+    {
+        crate::arch::x86_64::register_idt_gate(32, irq32_timer_entry as *const () as usize);
+        crate::arch::x86_64::register_idt_gate(33, irq33_keyboard_entry as *const () as usize);
+        crate::arch::x86_64::register_idt_gate(255, irq255_spurious_entry as *const () as usize);
+    }
 }

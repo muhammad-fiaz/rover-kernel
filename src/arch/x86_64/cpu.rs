@@ -232,6 +232,24 @@ pub fn are_interrupts_enabled() -> bool {
     (read_rflags() & (1 << 9)) != 0
 }
 
+/// Reads the current 64-bit cycle count from the processor's Time Stamp Counter.
+#[inline]
+#[must_use]
+pub fn read_cycle_counter() -> u64 {
+    let low: u32;
+    let high: u32;
+    // SAFETY: rdtsc instruction reads cycle count into edx:eax.
+    unsafe {
+        core::arch::asm!(
+            "rdtsc",
+            out("eax") low,
+            out("edx") high,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    (u64::from(high) << 32) | u64::from(low)
+}
+
 /// High-level CPU hardware identification and supported capability flags.
 #[derive(Clone, Debug)]
 #[allow(clippy::struct_excessive_bools)]

@@ -4,7 +4,7 @@
 //! vendor/device ID discovery, and Base Address Register (BAR) inspection.
 
 extern crate alloc;
-use crate::arch::x86_64::io::{inl, outl};
+use crate::arch::current::io::{inl, outl};
 use alloc::vec::Vec;
 
 const PCI_CONFIG_ADDRESS: u16 = 0x0CF8;

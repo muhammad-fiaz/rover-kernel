@@ -1,14 +1,20 @@
 //! # Architecture System Call Entry Point
 //!
-//! Configures x86-64 `EFER.SCE`, `STAR`, `LSTAR`, `FMASK` MSRs and naked `syscall_entry` stub.
+//! Configures hardware system call infrastructure and dispatch entry points.
 
+#[cfg(target_arch = "x86_64")]
 use crate::arch::x86_64::{read_msr, write_msr};
 
+#[cfg(target_arch = "x86_64")]
 const IA32_EFER: u32 = 0xC000_0080;
+#[cfg(target_arch = "x86_64")]
 const IA32_STAR: u32 = 0xC000_0081;
+#[cfg(target_arch = "x86_64")]
 const IA32_LSTAR: u32 = 0xC000_0082;
+#[cfg(target_arch = "x86_64")]
 const IA32_FMASK: u32 = 0xC000_0084;
 
+#[cfg(target_arch = "x86_64")]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 unsafe extern "C" fn syscall_entry() {
@@ -40,14 +46,13 @@ extern "C" fn handle_syscall_entry_thunk(num: u64, a1: u64, a2: u64, a3: u64) ->
     super::dispatch::handle_syscall_dispatch(num, a1, a2, a3)
 }
 
-/// Initializes hardware system call infrastructure on x86-64.
-///
-/// Enables `EFER.SCE`, sets target address in `LSTAR`, and masks interrupt flags in `FMASK`.
+/// Initializes hardware system call infrastructure on the CPU.
 ///
 /// # Safety
 ///
-/// Must be executed on CPU initialization in ring 0.
+/// Must be executed on CPU initialization in ring 0 / supervisor mode.
 pub unsafe fn init_syscall_architecture() {
+    #[cfg(target_arch = "x86_64")]
     unsafe {
         // 1. Enable System Call Extension (SCE - bit 0) in EFER.
         let efer = read_msr(IA32_EFER);

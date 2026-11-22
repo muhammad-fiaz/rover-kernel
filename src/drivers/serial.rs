@@ -3,7 +3,7 @@
 //! Provides polled RS-232 serial communication on standard PC COM ports (COM1 = 0x3F8).
 //! Supports 115200 baud, 8N1 framing, FIFO buffering, and `core::fmt::Write`.
 
-use crate::arch::x86_64::io::{inb, outb};
+use crate::arch::current::io::{inb, outb};
 use crate::sync::SpinLock;
 use core::fmt;
 

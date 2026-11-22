@@ -2,7 +2,7 @@
 //!
 //! Handles keyboard I/O on port 0x60/0x64 and translates Scancode Set 1 into ASCII characters.
 
-use crate::arch::x86_64::io::inb;
+use crate::arch::current::io::inb;
 
 const PS2_DATA_PORT: u16 = 0x60;
 const PS2_STATUS_PORT: u16 = 0x64;
