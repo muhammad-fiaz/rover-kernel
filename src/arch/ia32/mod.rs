@@ -11,7 +11,7 @@ pub mod io;
 pub use context::{CpuContext, switch_context};
 pub use cpu::{
     CpuCapabilities, are_interrupts_enabled, disable_interrupts, enable_interrupts, halt,
-    halt_loop, read_cycle_counter,
+    halt_loop, read_cycle_counter, read_msr, write_msr,
 };
 pub use gdt::{
     KERNEL_CODE_SELECTOR, KERNEL_DATA_SELECTOR, USER_CODE_SELECTOR, USER_DATA_SELECTOR,

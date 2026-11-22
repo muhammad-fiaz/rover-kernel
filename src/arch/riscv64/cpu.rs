@@ -62,11 +62,11 @@ impl CpuCapabilities {
 /// Halts the CPU core until the next interrupt occurs (`wfi`).
 #[inline]
 pub fn halt() {
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     unsafe {
         core::arch::asm!("wfi", options(nomem, nostack, preserves_flags));
     }
-    #[cfg(not(target_arch = "riscv64"))]
+    #[cfg(not(all(target_arch = "riscv64", target_os = "none")))]
     core::hint::spin_loop();
 }
 
@@ -85,7 +85,7 @@ pub fn halt_loop() -> ! {
 /// Caller must ensure that a trap vector table is initialized.
 #[inline]
 pub unsafe fn enable_interrupts() {
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     unsafe {
         core::arch::asm!("csrsi sstatus, 2", options(nomem, nostack, preserves_flags));
     }
@@ -94,7 +94,7 @@ pub unsafe fn enable_interrupts() {
 /// Disables supervisor interrupts (`csrci sstatus, 2`).
 #[inline]
 pub fn disable_interrupts() {
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     unsafe {
         core::arch::asm!("csrci sstatus, 2", options(nomem, nostack, preserves_flags));
     }
@@ -103,7 +103,7 @@ pub fn disable_interrupts() {
 /// Checks whether supervisor interrupts are enabled in `sstatus`.
 #[must_use]
 pub fn are_interrupts_enabled() -> bool {
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     {
         let status: u64;
         unsafe {
@@ -111,14 +111,14 @@ pub fn are_interrupts_enabled() -> bool {
         }
         (status & 2) != 0
     }
-    #[cfg(not(target_arch = "riscv64"))]
+    #[cfg(not(all(target_arch = "riscv64", target_os = "none")))]
     false
 }
 
 /// Reads the 64-bit cycle counter (`rdcycle`).
 #[must_use]
 pub fn read_cycle_counter() -> u64 {
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     {
         let val: u64;
         unsafe {
@@ -126,7 +126,7 @@ pub fn read_cycle_counter() -> u64 {
         }
         val
     }
-    #[cfg(not(target_arch = "riscv64"))]
+    #[cfg(not(all(target_arch = "riscv64", target_os = "none")))]
     0
 }
 

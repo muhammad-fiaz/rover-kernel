@@ -40,11 +40,11 @@ impl CpuCapabilities {
 /// Halts the CPU until an interrupt occurs (`wfi`).
 #[inline]
 pub fn halt() {
-    #[cfg(target_arch = "arm")]
+    #[cfg(all(target_arch = "arm", target_os = "none"))]
     unsafe {
         core::arch::asm!("wfi", options(nomem, nostack, preserves_flags));
     }
-    #[cfg(not(target_arch = "arm"))]
+    #[cfg(not(all(target_arch = "arm", target_os = "none")))]
     core::hint::spin_loop();
 }
 
@@ -63,7 +63,7 @@ pub fn halt_loop() -> ! {
 /// Caller must ensure exception vectors are configured.
 #[inline]
 pub unsafe fn enable_interrupts() {
-    #[cfg(target_arch = "arm")]
+    #[cfg(all(target_arch = "arm", target_os = "none"))]
     unsafe {
         core::arch::asm!("cpsie i", options(nomem, nostack, preserves_flags));
     }
@@ -72,7 +72,7 @@ pub unsafe fn enable_interrupts() {
 /// Disables hardware interrupts (`cpsid i`).
 #[inline]
 pub fn disable_interrupts() {
-    #[cfg(target_arch = "arm")]
+    #[cfg(all(target_arch = "arm", target_os = "none"))]
     unsafe {
         core::arch::asm!("cpsid i", options(nomem, nostack, preserves_flags));
     }
@@ -89,3 +89,22 @@ pub fn are_interrupts_enabled() -> bool {
 pub fn read_cycle_counter() -> u64 {
     0
 }
+
+/// Reads a Model-Specific Register stub for compatibility.
+///
+/// # Safety
+///
+/// Hardware register access stub.
+#[inline]
+#[must_use]
+pub unsafe fn read_msr(_msr: u32) -> u64 {
+    0
+}
+
+/// Writes a Model-Specific Register stub for compatibility.
+///
+/// # Safety
+///
+/// Hardware register access stub.
+#[inline]
+pub unsafe fn write_msr(_msr: u32, _val: u64) {}

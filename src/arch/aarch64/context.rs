@@ -92,7 +92,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         return;
     }
 
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     unsafe {
         core::arch::asm!(
             "mov x8, sp",
@@ -118,9 +118,9 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         );
     }
 
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
     {
-        // Fallback for non-aarch64 environments
+        // Fallback for non-bare-metal environments
         unsafe {
             let next_ctx = &*next;
             let prev_ctx = &mut *prev;

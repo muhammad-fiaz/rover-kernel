@@ -64,7 +64,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         return;
     }
 
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     unsafe {
         core::arch::asm!(
             "push ebp",
@@ -84,7 +84,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         );
     }
 
-    #[cfg(not(target_arch = "x86"))]
+    #[cfg(not(all(target_arch = "x86", target_os = "none")))]
     {
         let _ = unsafe { (&*next).eip };
     }

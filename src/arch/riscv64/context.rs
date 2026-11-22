@@ -96,7 +96,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         return;
     }
 
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     unsafe {
         core::arch::asm!(
             "sd ra, 0(a0)",
@@ -134,7 +134,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         );
     }
 
-    #[cfg(not(target_arch = "riscv64"))]
+    #[cfg(not(all(target_arch = "riscv64", target_os = "none")))]
     {
         let _ = unsafe { (&*next).ra };
     }

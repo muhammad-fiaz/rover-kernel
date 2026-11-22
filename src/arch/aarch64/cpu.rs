@@ -38,7 +38,7 @@ impl CpuCapabilities {
         let has_asimd = true;
         let has_pxn = true;
 
-        #[cfg(target_arch = "aarch64")]
+        #[cfg(all(target_arch = "aarch64", target_os = "none"))]
         let (has_aes, has_sha2, has_crc32, has_atomics, has_pan) = unsafe {
             let isar0: u64;
             core::arch::asm!(
@@ -61,7 +61,7 @@ impl CpuCapabilities {
             )
         };
 
-        #[cfg(not(target_arch = "aarch64"))]
+        #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
         let (has_aes, has_sha2, has_crc32, has_atomics, has_pan) =
             (false, false, false, false, false);
 
@@ -88,11 +88,11 @@ impl CpuCapabilities {
 /// Halts the CPU until an interrupt occurs (`wfi`).
 #[inline]
 pub fn halt() {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     unsafe {
         core::arch::asm!("wfi", options(nomem, nostack, preserves_flags));
     }
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
     core::hint::spin_loop();
 }
 
@@ -111,7 +111,7 @@ pub fn halt_loop() -> ! {
 /// The caller must ensure that exception vectors are registered and valid.
 #[inline]
 pub unsafe fn enable_interrupts() {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     unsafe {
         core::arch::asm!("msr daifclr, #2", options(nomem, nostack, preserves_flags));
     }
@@ -120,7 +120,7 @@ pub unsafe fn enable_interrupts() {
 /// Disables hardware interrupts (`msr daifset, #2`).
 #[inline]
 pub fn disable_interrupts() {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     unsafe {
         core::arch::asm!("msr daifset, #2", options(nomem, nostack, preserves_flags));
     }
@@ -129,7 +129,7 @@ pub fn disable_interrupts() {
 /// Returns `true` if hardware interrupts are currently enabled in `DAIF`.
 #[must_use]
 pub fn are_interrupts_enabled() -> bool {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     {
         let daif: u64;
         unsafe {
@@ -137,7 +137,7 @@ pub fn are_interrupts_enabled() -> bool {
         }
         (daif & (1 << 7)) == 0
     }
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
     {
         false
     }
@@ -146,7 +146,7 @@ pub fn are_interrupts_enabled() -> bool {
 /// Queries the Current Exception Level (EL0, EL1, EL2, or EL3).
 #[must_use]
 pub fn read_current_el() -> u8 {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     {
         let el: u64;
         unsafe {
@@ -154,7 +154,7 @@ pub fn read_current_el() -> u8 {
         }
         ((el >> 2) & 0x3) as u8
     }
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
     {
         1
     }
@@ -163,7 +163,7 @@ pub fn read_current_el() -> u8 {
 /// Reads the virtual counter timer frequency (`cntvct_el0`).
 #[must_use]
 pub fn read_cycle_counter() -> u64 {
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     {
         let count: u64;
         unsafe {
@@ -171,7 +171,7 @@ pub fn read_cycle_counter() -> u64 {
         }
         count
     }
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(not(all(target_arch = "aarch64", target_os = "none")))]
     {
         0
     }

@@ -149,22 +149,22 @@ impl IndexMut<usize> for PageTable {
 /// Flushes the TLB entry for the specified virtual address.
 #[inline]
 pub fn invalidate_page(addr: VirtAddr) {
-    #[cfg(target_arch = "x86_64")]
+    #[cfg(all(target_arch = "x86_64", target_os = "none"))]
     unsafe {
         core::arch::asm!("invlpg [{0}]", in(reg) addr.as_u64(), options(nostack, preserves_flags));
     }
-    #[cfg(target_arch = "aarch64")]
+    #[cfg(all(target_arch = "aarch64", target_os = "none"))]
     unsafe {
         core::arch::asm!("tlbi vaae1is, {0}", in(reg) addr.as_u64() >> 12, options(nomem, nostack));
     }
-    #[cfg(target_arch = "riscv64")]
+    #[cfg(all(target_arch = "riscv64", target_os = "none"))]
     unsafe {
         core::arch::asm!("sfence.vma {0}, zero", in(reg) addr.as_u64(), options(nomem, nostack));
     }
     #[cfg(not(any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "riscv64"
+        all(target_arch = "x86_64", target_os = "none"),
+        all(target_arch = "aarch64", target_os = "none"),
+        all(target_arch = "riscv64", target_os = "none")
     )))]
     {
         let _ = addr;

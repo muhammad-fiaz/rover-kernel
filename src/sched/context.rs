@@ -11,7 +11,7 @@
 ///
 /// `prev_rsp` must be a valid pointer to store the current stack pointer.
 /// `next_rsp` must be a valid pointer to an initialized [`super::task::CpuContext`] stack frame.
-#[cfg(target_arch = "x86_64")]
+#[cfg(all(target_arch = "x86_64", target_os = "none"))]
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 pub unsafe extern "C" fn switch_context(prev_rsp: *mut *mut u8, next_rsp: *const u8) {
@@ -41,5 +41,5 @@ pub unsafe extern "C" fn switch_context(prev_rsp: *mut *mut u8, next_rsp: *const
 /// # Safety
 ///
 /// Pointers must be valid or null.
-#[cfg(not(target_arch = "x86_64"))]
+#[cfg(not(all(target_arch = "x86_64", target_os = "none")))]
 pub unsafe extern "C" fn switch_context(_prev_rsp: *mut *mut u8, _next_rsp: *const u8) {}

@@ -80,7 +80,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         return;
     }
 
-    #[cfg(target_arch = "arm")]
+    #[cfg(all(target_arch = "arm", target_os = "none"))]
     unsafe {
         core::arch::asm!(
             "stmia r0, {r4-r11, sp, lr}",
@@ -92,7 +92,7 @@ pub unsafe fn switch_context(prev: *mut CpuContext, next: *const CpuContext) {
         );
     }
 
-    #[cfg(not(target_arch = "arm"))]
+    #[cfg(not(all(target_arch = "arm", target_os = "none")))]
     {
         let _ = unsafe { (&*next).lr };
     }

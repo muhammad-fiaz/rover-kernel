@@ -1,27 +1,24 @@
 //! # 32-bit x86 (IA-32) CPU Control and Identification
 //!
-//! Control registers (CR0, CR2, CR3, CR4), CPUID, port I/O, and execution state for 32-bit x86.
+//! Provides register manipulation, CPUID parsing, and processor state control for 32-bit x86.
 
 /// High-level CPU hardware identification and supported capability flags for 32-bit x86.
 #[derive(Clone, Debug)]
-#[allow(clippy::struct_excessive_bools)]
 pub struct CpuCapabilities {
     /// Processor vendor identifier string.
     pub vendor: [u8; 12],
     /// On-chip APIC present.
     pub has_apic: bool,
-    /// SSE instructions supported.
+    /// SSE supported.
     pub has_sse: bool,
-    /// SSE2 instructions supported.
+    /// SSE2 supported.
     pub has_sse2: bool,
     /// Physical Address Extension (PAE) supported.
     pub has_pae: bool,
-    /// Page Global Enable (PGE) supported.
-    pub has_pge: bool,
 }
 
 impl CpuCapabilities {
-    /// Probes 32-bit x86 CPUID leaves.
+    /// Probes 32-bit x86 CPU capabilities.
     #[must_use]
     pub fn probe() -> Self {
         let mut vendor = [0u8; 12];
@@ -33,7 +30,6 @@ impl CpuCapabilities {
             has_sse: true,
             has_sse2: true,
             has_pae: true,
-            has_pge: true,
         }
     }
 
@@ -47,11 +43,11 @@ impl CpuCapabilities {
 /// Halts the CPU until an interrupt occurs.
 #[inline]
 pub fn halt() {
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     unsafe {
         core::arch::asm!("hlt", options(nomem, nostack, preserves_flags));
     }
-    #[cfg(not(target_arch = "x86"))]
+    #[cfg(not(all(target_arch = "x86", target_os = "none")))]
     core::hint::spin_loop();
 }
 
@@ -70,7 +66,7 @@ pub fn halt_loop() -> ! {
 /// Caller must ensure that an IDT is loaded.
 #[inline]
 pub unsafe fn enable_interrupts() {
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     unsafe {
         core::arch::asm!("sti", options(nomem, nostack, preserves_flags));
     }
@@ -79,7 +75,7 @@ pub unsafe fn enable_interrupts() {
 /// Disables hardware interrupts (`cli`).
 #[inline]
 pub fn disable_interrupts() {
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     unsafe {
         core::arch::asm!("cli", options(nomem, nostack, preserves_flags));
     }
@@ -88,7 +84,7 @@ pub fn disable_interrupts() {
 /// Checks whether hardware interrupts are enabled in EFLAGS.
 #[must_use]
 pub fn are_interrupts_enabled() -> bool {
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     {
         let eflags: u32;
         unsafe {
@@ -96,14 +92,14 @@ pub fn are_interrupts_enabled() -> bool {
         }
         (eflags & (1 << 9)) != 0
     }
-    #[cfg(not(target_arch = "x86"))]
+    #[cfg(not(all(target_arch = "x86", target_os = "none")))]
     false
 }
 
 /// Reads the Time Stamp Counter on 32-bit x86 (`rdtsc`).
 #[must_use]
 pub fn read_cycle_counter() -> u64 {
-    #[cfg(target_arch = "x86")]
+    #[cfg(all(target_arch = "x86", target_os = "none"))]
     {
         let low: u32;
         let high: u32;
@@ -112,6 +108,25 @@ pub fn read_cycle_counter() -> u64 {
         }
         (u64::from(high) << 32) | u64::from(low)
     }
-    #[cfg(not(target_arch = "x86"))]
+    #[cfg(not(all(target_arch = "x86", target_os = "none")))]
     0
 }
+
+/// Reads a Model-Specific Register stub for compatibility.
+///
+/// # Safety
+///
+/// Hardware register access stub.
+#[inline]
+#[must_use]
+pub unsafe fn read_msr(_msr: u32) -> u64 {
+    0
+}
+
+/// Writes a Model-Specific Register stub for compatibility.
+///
+/// # Safety
+///
+/// Hardware register access stub.
+#[inline]
+pub unsafe fn write_msr(_msr: u32, _val: u64) {}

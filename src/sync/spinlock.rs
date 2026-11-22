@@ -151,7 +151,7 @@ impl<T> Drop for IrqSafeSpinLockGuard<'_, T> {
 
 #[inline]
 fn save_and_disable_interrupts() -> u64 {
-    #[cfg(target_arch = "x86_64")]
+    #[cfg(all(target_arch = "x86_64", target_os = "none"))]
     {
         let rflags: u64;
         // SAFETY: Reading RFLAGS and disabling interrupts.
@@ -166,7 +166,7 @@ fn save_and_disable_interrupts() -> u64 {
         }
         rflags
     }
-    #[cfg(not(target_arch = "x86_64"))]
+    #[cfg(not(all(target_arch = "x86_64", target_os = "none")))]
     {
         0
     }
@@ -174,7 +174,7 @@ fn save_and_disable_interrupts() -> u64 {
 
 #[inline]
 fn restore_interrupts(saved_rflags: u64) {
-    #[cfg(target_arch = "x86_64")]
+    #[cfg(all(target_arch = "x86_64", target_os = "none"))]
     {
         // Bit 9 in RFLAGS is the IF (Interrupt Flag).
         if (saved_rflags & (1 << 9)) != 0 {
@@ -184,7 +184,7 @@ fn restore_interrupts(saved_rflags: u64) {
             }
         }
     }
-    #[cfg(not(target_arch = "x86_64"))]
+    #[cfg(not(all(target_arch = "x86_64", target_os = "none")))]
     {
         let _ = saved_rflags;
     }
